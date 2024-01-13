@@ -1,6 +1,6 @@
 using CEnum
 
-const STEAM_API_DLL = "steam_api64.dll"  
+const STEAM_API_DLL = joinpath(@__DIR__, "steam_api64.dll")  
 # Replace with the actual name of the DLL file
 
 const SteamErrMsg = NTuple{1024, Cchar}
@@ -23,11 +23,11 @@ it will receive a non-localized message that explains the reason for the failure
 ```
 """
 function SteamInternal_SteamAPI_Init(pOutErrMsg)
-    ccall((:SteamInternal_SteamAPI_Init, joinpath(@__DIR__, STEAM_API_DLL)), UInt8, (Ptr{Cchar}, Ref{SteamErrMsg}), C_NULL, pOutErrMsg)
+    ccall((:SteamInternal_SteamAPI_Init, STEAM_API_DLL), UInt8, (Ptr{Cchar}, Ref{SteamErrMsg}), C_NULL, pOutErrMsg)
 end
 
 function SteamAPI_IsSteamRunning()
-    ccall((:SteamAPI_IsSteamRunning, joinpath(@__DIR__, STEAM_API_DLL)), Cint, ())
+    ccall((:SteamAPI_IsSteamRunning, STEAM_API_DLL), Cint, ())
 end
 
 function SteamAPI_ISteamFriends_GetPersonaName(self)
@@ -35,11 +35,11 @@ function SteamAPI_ISteamFriends_GetPersonaName(self)
 end
 
 function SteamAPI_ISteamClient_CreateSteamPipe(self)
-    ccall((:SteamAPI_ISteamClient_CreateSteamPipe, joinpath(@__DIR__, STEAM_API_DLL)), Cint, (Ptr{Cint},), self)    
+    ccall((:SteamAPI_ISteamClient_CreateSteamPipe, STEAM_API_DLL), Cint, (Ptr{Cint},), self)    
 end
 
 function SteamAPI_SteamFriends()
-    ccall((:SteamAPI_SteamFriends_v017, joinpath(@__DIR__, STEAM_API_DLL)), Ptr{Cint}, ())
+    ccall((:SteamAPI_SteamFriends_v017, STEAM_API_DLL), Ptr{Cint}, ())
 end
 
 function SteamClient()
