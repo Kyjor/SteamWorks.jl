@@ -1,11 +1,12 @@
+module SteamWorks
 using CEnum
-
-const STEAM_API_DLL = joinpath(@__DIR__, "steam_api64.dll")  
+export STEAM_API_DLL    
+STEAM_API_DLL::String = joinpath(pwd(), "steam_api64.dll")  
 # Replace with the actual name of the DLL file
-
+    
 const SteamErrMsg = NTuple{1024, Cchar}
-
-
+    
+    
 @cenum ESteamAPIInitResult::UInt32 begin
     k_ESteamAPIInitResult_OK = 0
     k_ESteamAPIInitResult_FailedGeneric = 1 # Some other failure
@@ -23,6 +24,7 @@ it will receive a non-localized message that explains the reason for the failure
 ```
 """
 function SteamInternal_SteamAPI_Init(pOutErrMsg)
+    println(STEAM_API_DLL)
     ccall((:SteamInternal_SteamAPI_Init, STEAM_API_DLL), UInt8, (Ptr{Cchar}, Ref{SteamErrMsg}), C_NULL, pOutErrMsg)
 end
 
@@ -54,25 +56,6 @@ function SteamAPI_InitEx(pOutErrMsg)
     ccall((:SteamAPI_InitEx, STEAM_API_DLL), ESteamAPIInitResult, (Ptr{SteamErrMsg},), pOutErrMsg)
 end
 
-function CheckIfSteamIsRunning()
-    if SteamAPI_IsSteamRunning() == 0
-        println("Steam is not running")
-    else
-        println("Steam is running")
-    end 
-end
-
-function InitSteamAPI()
-    errMsg = Ref{SteamErrMsg}()
-    initSteamAPI = SteamInternal_SteamAPI_Init(errMsg)
-    string_result = getStringFromNTuple(errMsg[])
-
-    if initSteamAPI == k_ESteamAPIInitResult_OK
-        @info ("Steam API initialized")
-    else
-        @error string_result
-    end
-end
 
 function getStringFromNTuple(msg)
     characters = []
@@ -93,14 +76,39 @@ function SteamAPI_RestartAppIfNecessary(appId::UInt32 = UInt32(480))
     ccall((:SteamAPI_RestartAppIfNecessary, STEAM_API_DLL), Bool, (UInt32,), appId)
 end
 
-function CreateSteamClient()
+# const InputActionSetHandle_t = UInt64
+# const STEAM_INPUT_HANDLE_ALL_CONTROLLERS = UInt64.m
+# function SteamAPI_ISteamInput_ActivateActionSet(self, inputHandle, actionSetHandle)
+#     ccall((:SteamAPI_ISteamInput_ActivateActionSet, libsteamapi), Cint, (Ptr{Cint}, Cint, Cint), self, inputHandle, actionSetHandle)
+# end
+function CheckIfSteamIsRunning()
+    if SteamAPI_IsSteamRunning() == 0
+        println("Steam is not running")
+    else
+        println("Steam is running")
+    end 
+end
+
+function InitSteamAPI()
+    errMsg = Ref{SteamErrMsg}()
+    initSteamAPI = SteamInternal_SteamAPI_Init(errMsg)
+    string_result = getStringFromNTuple(errMsg[])
+    
+    if initSteamAPI == k_ESteamAPIInitResult_OK
+        @info ("Steam API initialized")
+    else
+        @error string_result
+    end
+end
+
+function InitSteamTools()
     if SteamAPI_RestartAppIfNecessary()
         println("Restarting app")
         return
     else
-            println("App is not restarting")
+        println("App is not restarting")
     end
-
+    
     steamClient = SteamClient()
     if steamClient == C_NULL
         @error "Steam client is null"
@@ -108,7 +116,7 @@ function CreateSteamClient()
         @info "Steam client created"
         println(unsafe_load(steamClient))
     end
-
+    
     steamPipe = SteamAPI_ISteamClient_CreateSteamPipe(steamClient)
     if steamPipe == 0
         @error "Steam pipe is null"
@@ -116,7 +124,7 @@ function CreateSteamClient()
         @info "Steam pipe created"
         println(steamPipe)
     end
-
+    
     steamFriends = SteamAPI_SteamFriends()
     if steamFriends == C_NULL
         @error "Steam friends is null"
@@ -124,7 +132,7 @@ function CreateSteamClient()
         @info "Steam friends created"
         println(unsafe_load(steamFriends))
     end
-
+    
     personaName = SteamAPI_ISteamFriends_GetPersonaName(steamFriends)
     text = getStringFromNTuple(personaName)
     if personaName == C_NULL
@@ -133,7 +141,7 @@ function CreateSteamClient()
         @info "Persona name created"
         println(text)
     end
-
+    
     steamInput = SteamAPI_SteamInput()
     if steamInput == C_NULL
         @error "Steam input is null"
@@ -141,4 +149,9 @@ function CreateSteamClient()
         @info "Steam input created"
         println(unsafe_load(steamInput))
     end
+
+    return (client = steamClient, pipe = steamPipe, friends = steamFriends, input = steamInput, name = text)
+end
+export InitSteamAPI, InitSteamTools, CheckIfSteamIsRunning
+
 end
