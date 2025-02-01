@@ -1,0 +1,17 @@
+[general]
+library_name = "libsteam_api"
+output_file_path = "./LibSteam.jl"
+module_name = "LibSteam"
+#jll_pkg_name = "libsteam_api_jll"
+#export_symbol_prefixes = ["SteamAPI_"]
+extract_c_comment_style = "doxygen"
+
+printer_blacklist = [
+    "k_steamIDNil",
+    "k_steamIDOutofDateGS",
+    "k_steamIDLanModeGS",
+    "k_steamIDNotInitYetGS",
+    "k_steamIDNonSteamGS",
+    "STEAM_CONTROLLER_HANDLE_ALL_CONTROLLERS",
+    "STEAM_INPUT_HANDLE_ALL_CONTROLLERS",
+]

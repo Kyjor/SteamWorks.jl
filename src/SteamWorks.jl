@@ -1,9 +1,9 @@
 module SteamWorks
 using CEnum
-export STEAM_API_DLL    
-STEAM_API_DLL::String = joinpath(pwd(), "steam_api64.dll")  
-# Replace with the actual name of the DLL file
-    
+include("LibSteam2.jl")
+using .LibSteam
+export LibSteam
+
 const SteamErrMsg = NTuple{1024, Cchar}
     
     
@@ -23,39 +23,6 @@ it will receive a non-localized message that explains the reason for the failure
 
 ```
 """
-function SteamInternal_SteamAPI_Init(pOutErrMsg)
-    println(STEAM_API_DLL)
-    ccall((:SteamInternal_SteamAPI_Init, STEAM_API_DLL), UInt8, (Ptr{Cchar}, Ref{SteamErrMsg}), C_NULL, pOutErrMsg)
-end
-
-function SteamAPI_IsSteamRunning()
-    ccall((:SteamAPI_IsSteamRunning, STEAM_API_DLL), Cint, ())
-end
-
-function SteamAPI_ISteamFriends_GetPersonaName(self)
-    ccall((:SteamAPI_ISteamFriends_GetPersonaName, STEAM_API_DLL), Ref{NTuple{1024, Cchar}}, (Ptr{Cint},), self)
-end
-
-function SteamAPI_ISteamClient_CreateSteamPipe(self)
-    ccall((:SteamAPI_ISteamClient_CreateSteamPipe, STEAM_API_DLL), Cint, (Ptr{Cint},), self)    
-end
-
-function SteamAPI_SteamFriends()
-    ccall((:SteamAPI_SteamFriends_v017, STEAM_API_DLL), Ptr{Cint}, ())
-end
-
-function SteamClient()
-    ccall((:SteamClient, STEAM_API_DLL), Ptr{Cint}, ())
-end
-
-function SteamAPI_SteamInput()
-    ccall((:SteamAPI_SteamInput_v006, STEAM_API_DLL), Ptr{Cint}, ())
-end
-
-function SteamAPI_InitEx(pOutErrMsg)
-    ccall((:SteamAPI_InitEx, STEAM_API_DLL), ESteamAPIInitResult, (Ptr{SteamErrMsg},), pOutErrMsg)
-end
-
 
 function getStringFromNTuple(msg)
     characters = []
@@ -70,10 +37,6 @@ function getStringFromNTuple(msg)
         end
     end
     return join(characters)
-end
-
-function SteamAPI_RestartAppIfNecessary(appId::UInt32 = UInt32(480))
-    ccall((:SteamAPI_RestartAppIfNecessary, STEAM_API_DLL), Bool, (UInt32,), appId)
 end
 
 # const InputActionSetHandle_t = UInt64
@@ -91,7 +54,8 @@ end
 
 function InitSteamAPI()
     errMsg = Ref{SteamErrMsg}()
-    initSteamAPI = SteamInternal_SteamAPI_Init(errMsg)
+    println(LibSteam.SteamAPI_SteamUser())
+    initSteamAPI = LibSteam.SteamAPI_InitEx(errMsg)
     string_result = getStringFromNTuple(errMsg[])
     
     if initSteamAPI == k_ESteamAPIInitResult_OK
