@@ -30,3 +30,5 @@ steam_appid.txt
 .vscode/
 
 *.so
+
+gen/sdk/
