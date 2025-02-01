@@ -1,6 +1,6 @@
 module SteamWorks
 using CEnum
-include("LibSteam2.jl")
+include("LibSteam.jl")
 using .LibSteam
 export LibSteam
 

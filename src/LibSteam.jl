@@ -1,7 +1,14 @@
 module LibSteam
 
 using CEnum
-libsteam_api = joinpath(pwd(), "libsteam_api.so")
+libsteam_api = nothing
+if Sys.iswindows()
+    libsteam_api = joinpath(pwd(), "steam_api64.dll")
+elseif Sys.isapple()
+    libsteam_api = joinpath(pwd(), "libsteam_api.dylib")
+else
+    libsteam_api = joinpath(pwd(), "libsteam_api.so")
+end
 
 const uint64_steamid = Cint
 
