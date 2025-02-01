@@ -1,0 +1,11 @@
+name = "SteamWorks"
+uuid = "f566db49-6641-45f6-b6c8-f763a49eb264"
+repo = "https://github.com/Kyjor/SteamWorks.jl.git"
+version = "0.1.0"
+
+[deps]
+CEnum = "fa961155-64e5-5f13-b03f-caf6b980ea82"
+
+[compat]
+CEnum = "0.4"
+julia = "1.3"
