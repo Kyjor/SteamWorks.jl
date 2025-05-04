@@ -10,9 +10,9 @@ else
     libsteam_api = joinpath(pwd(), "libsteam_api.so")
 end
 
-const uint64_steamid = Cint
+const uint64_steamid = UInt64
 
-const uint64_gameid = Cint
+const uint64_gameid = UInt64
 
 function SteamAPI_ISteamClient_ReleaseUser(self, hSteamPipe, hUser)
     ccall((:SteamAPI_ISteamClient_ReleaseUser, libsteam_api), Cint, (Ptr{Cint}, Cint, Cint), self, hSteamPipe, hUser)
@@ -33,6 +33,10 @@ end
 # no prototype is found for this function at steam_api_flat.h:62:20, please use with caution
 function SteamAPI_SteamUser()
     ccall((:SteamAPI_SteamUser_v023, libsteam_api), Ptr{Cint}, ())
+end
+
+function SteamAPI_ISteamUser_GetSteamID(self)
+    ccall((:SteamAPI_ISteamUser_GetSteamID, libsteam_api), uint64_steamid, (Ptr{Cint},), self)
 end
 
 function SteamAPI_ISteamUser_InitiateGameConnection_DEPRECATED(self, pAuthBlob, cbMaxAuthBlob, steamIDGameServer, unIPServer, usPortServer, bSecure)
@@ -8380,28 +8384,6 @@ end
 function Base.getproperty(x::SteamInventoryEligiblePromoItemDefIDs_t, f::Symbol)
     r = Ref{SteamInventoryEligiblePromoItemDefIDs_t}(x)
     ptr = Base.unsafe_convert(Ptr{SteamInventoryEligiblePromoItemDefIDs_t}, r)
-    fptr = getproperty(ptr, f)
-    GC.@preserve r unsafe_load(fptr)
-end
-
-function Base.setproperty!(x::Ptr{SteamInventoryEligiblePromoItemDefIDs_t}, f::Symbol, v)
-    unsafe_store!(getproperty(x, f), v)
-end
-
-struct SteamInventoryStartPurchaseResult_t
-    data::NTuple{20, UInt8}
-end
-
-function Base.getproperty(x::Ptr{SteamInventoryStartPurchaseResult_t}, f::Symbol)
-    f === :m_result && return Ptr{EResult}(x + 0)
-    f === :m_ulOrderID && return Ptr{uint64}(x + 4)
-    f === :m_ulTransID && return Ptr{uint64}(x + 12)
-    return getfield(x, f)
-end
-
-function Base.getproperty(x::SteamInventoryStartPurchaseResult_t, f::Symbol)
-    r = Ref{SteamInventoryStartPurchaseResult_t}(x)
-    ptr = Base.unsafe_convert(Ptr{SteamInventoryStartPurchaseResult_t}, r)
     fptr = getproperty(ptr, f)
     GC.@preserve r unsafe_load(fptr)
 end

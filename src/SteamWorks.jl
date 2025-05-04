@@ -5,7 +5,8 @@ using .LibSteam
 export LibSteam
 
 const SteamErrMsg = NTuple{1024, Cchar}
-    
+export UserId
+const UserId::Ref{UInt64} = Ref{UInt64}(0)
     
 @cenum ESteamAPIInitResult::UInt32 begin
     k_ESteamAPIInitResult_OK = 0
@@ -54,9 +55,23 @@ end
 
 function InitSteamAPI()
     errMsg = Ref{SteamErrMsg}()
-    println(LibSteam.SteamAPI_SteamUser())
     initSteamAPI = LibSteam.SteamAPI_InitEx(errMsg)
+
+    # Get the pointer
+    steamUserPtr = LibSteam.SteamAPI_SteamUser()
+
+    # Check if the pointer is not null before dereferencing
+    if steamUserPtr != C_NULL
+        # Dereference the pointer to get the Int32 value
+        UserId[] = LibSteam.SteamAPI_ISteamUser_GetSteamID(steamUserPtr)
+        @info "SteamID: $(UserId[])"
+    else
+        @error("SteamAPI_SteamUser returned a null pointer.")
+    end
+
     string_result = getStringFromNTuple(errMsg[])
+    println("SteamAPI_InitEx output: $(initSteamAPI)")
+    println("SteamAPI_InitEx error message: $(string_result)")
     
     if initSteamAPI == k_ESteamAPIInitResult_OK
         @info ("Steam API initialized")
