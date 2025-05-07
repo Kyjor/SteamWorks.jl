@@ -184,6 +184,10 @@ function SteamAPI_ISteamFriends_GetClanOfficerCount(self, steamIDClan)
     ccall((:SteamAPI_ISteamFriends_GetClanOfficerCount, libsteam_api), Cint, (Ptr{Cint}, Cint), self, steamIDClan)
 end
 
+function SteamAPI_ISteamFriends_SetRichPresence(self, pchKey, pchValue)
+    ccall((:SteamAPI_ISteamFriends_SetRichPresence, libsteam_api), Cint, (Ptr{Cint}, Ptr{Cchar}, Ptr{Cchar}), self, pchKey, pchValue)
+end
+
 function SteamAPI_ISteamFriends_ClearRichPresence(self)
     ccall((:SteamAPI_ISteamFriends_ClearRichPresence, libsteam_api), Cint, (Ptr{Cint},), self)
 end
