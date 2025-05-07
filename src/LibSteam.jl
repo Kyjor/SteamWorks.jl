@@ -81,7 +81,7 @@ end
 
 # no prototype is found for this function at steam_api_flat.h:102:23, please use with caution
 function SteamAPI_SteamFriends()
-    ccall((:SteamAPI_SteamFriends, libsteam_api), Ptr{Cint}, ())
+    ccall((:SteamAPI_SteamFriends_v017, libsteam_api), Ptr{Cint}, ())
 end
 
 function SteamAPI_ISteamFriends_GetPersonaName(self)
