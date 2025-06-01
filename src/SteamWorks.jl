@@ -57,6 +57,13 @@ function InitSteamAPI()
     errMsg = Ref{SteamErrMsg}()
     initSteamAPI = LibSteam.SteamAPI_InitEx(errMsg)
 
+    if initSteamAPI == k_ESteamAPIInitResult_OK
+        @debug ("Steam API initialized")
+    else
+        @error ("Steam API initialization failed: $(getStringFromNTuple(errMsg[]))")
+        return
+    end
+
     # Get the pointer
     steamUserPtr = LibSteam.SteamAPI_SteamUser()
 
