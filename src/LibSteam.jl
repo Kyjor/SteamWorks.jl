@@ -8392,10 +8392,6 @@ function Base.getproperty(x::SteamInventoryEligiblePromoItemDefIDs_t, f::Symbol)
     GC.@preserve r unsafe_load(fptr)
 end
 
-function Base.setproperty!(x::Ptr{SteamInventoryStartPurchaseResult_t}, f::Symbol, v)
-    unsafe_store!(getproperty(x, f), v)
-end
-
 struct SteamInventoryRequestPricesResult_t
     data::NTuple{8, UInt8}
 end
