@@ -3,10 +3,13 @@ module LibSteam
 using CEnum
 libsteam_api = nothing
 if Sys.iswindows()
+    println("Windows from $(joinpath(pwd(), "steam_api64.dll"))")
     libsteam_api = joinpath(pwd(), "steam_api64.dll")
 elseif Sys.isapple()
+    println("Mac from $(joinpath(pwd(), "libsteam_api.dylib"))")
     libsteam_api = joinpath(pwd(), "libsteam_api.dylib")
 else
+    println("Linux from $(joinpath(pwd(), "libsteam_api.so"))")
     libsteam_api = joinpath(pwd(), "libsteam_api.so")
 end
 
