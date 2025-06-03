@@ -13,6 +13,17 @@ else
     libsteam_api = joinpath(pwd(), "libsteam_api.so")
 end
 
+function SetLibraryPath(path::String = pwd())
+    if Sys.iswindows()
+        global libsteam_api = joinpath(path, "steam_api64.dll")
+    elseif Sys.isapple()
+        global libsteam_api = joinpath(path, "libsteam_api.dylib")
+    elseif Sys.islinux()
+        global libsteam_api = joinpath(path, "libsteam_api.so")
+    end
+    println("Library path set to $(libsteam_api)")
+end
+
 const uint64_steamid = UInt64
 
 const uint64_gameid = UInt64

@@ -53,7 +53,8 @@ function CheckIfSteamIsRunning()
     end 
 end
 
-function InitSteamAPI()
+function InitSteamAPI(path::String = pwd())
+    LibSteam.SetLibraryPath(path)
     errMsg = Ref{SteamErrMsg}()
     initSteamAPI = LibSteam.SteamAPI_InitEx(errMsg)
 
