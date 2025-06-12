@@ -62,7 +62,7 @@ function InitSteamAPI(path::String = pwd())
         @debug ("Steam API initialized")
     else
         @error ("Steam API initialization failed: $(getStringFromNTuple(errMsg[]))")
-        return
+        return - 1
     end
 
     # Get the pointer
@@ -86,6 +86,8 @@ function InitSteamAPI(path::String = pwd())
     else
         @error string_result
     end
+
+    return 0
 end
 
 function InitSteamTools()
